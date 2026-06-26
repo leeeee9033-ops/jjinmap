@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>찐(JIN)맛집 - iPhone 13 App Prototype</title>
+  <style>
+    :root{
+      --yellow:#FFD400;
+      --red:#E5213D;
+      --orange:#FF8A00;
+      --cream:#FFF8E7;
+      --paper:#FFFDF7;
+      --black:#1C1715;
+      --gray:#77706A;
+      --line:#181412;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#f2ead9;
+      font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",system-ui,sans-serif;
+      color:var(--black);
+    }
+    .iphone{
+      width:390px;
+      height:844px;
+      background:#101010;
+      border-radius:46px;
+      padding:14px;
+      box-shadow:0 24px 70px rgba(0,0,0,.32);
+    }
+    .screen{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      border-radius:34px;
+      background:var(--cream);
+      border:3px solid #090909;
+    }
+    .notch{
+      position:absolute;
+      z-index:10;
+      top:8px;
+      left:50%;
+      transform:translateX(-50%);
+      width:128px;
+      height:28px;
+      background:#111;
+      border-radius:0 0 18px 18px;
+    }
+    .status{
+      height:42px;
+      padding:12px 24px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:800;
+      font-size:13px;
+    }
+    .content{
+      height:calc(100% - 42px - 76px);
+      overflow-y:auto;
+      padding:12px 18px 24px;
+      scrollbar-width:none;
+    }
+    .content::-webkit-scrollbar{display:none}
+    .hero{
+      background:linear-gradient(135deg,var(--yellow),#fff06a);
+      border:3px solid var(--line);
+      border-radius:26px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:7px 7px 0 #15110f;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:var(--red);
+      color:#fff;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      border:2px solid var(--line);
+    }
+    h1{
+      margin:12px 0 6px;
+      font-size:30px;
+      line-height:1.04;
+      letter-spacing:-1px;
+    }
+    .hero p{
+      width:65%;
+      margin:0;
+      font-size:13px;
+      line-height:1.45;
+      font-weight:700;
+    }
+    .mascot{
+      position:absolute;
+      right:12px;
+      bottom:8px;
+      width:102px;
+      height:102px;
+      animation:bounce 2.2s infinite;
+    }
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .face{
+      width:82px;height:82px;background:#fff;border:4px solid #111;border-radius:42px 42px 36px 36px;position:absolute;bottom:0;right:8px;
+    }
+    .face:before,.face:after{content:"";position:absolute;top:32px;width:8px;height:8px;background:#111;border-radius:50%}
+    .face:before{left:24px}.face:after{right:24px}
+    .mouth{position:absolute;left:36px;top:47px;width:12px;height:7px;border-bottom:3px solid var(--red);border-radius:50%}
+    .egg{
+      position:absolute;left:7px;top:5px;width:46px;height:46px;background:#fff13d;border:4px solid #111;border-radius:50%;
+    }
+    .egg:before{content:"";position:absolute;left:13px;top:15px;width:6px;height:6px;background:#111;border-radius:50%}
+    .egg:after{content:"";position:absolute;right:11px;top:15px;width:6px;height:6px;background:#111;border-radius:50%}
+    .search{
+      margin:18px 0 14px;
+      background:#fff;
+      border:2px solid #e8dec9;
+      border-radius:18px;
+      padding:13px 15px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      color:#8c8176;
+      box-shadow:0 6px 16px rgba(0,0,0,.06);
+    }
+    .section-head{
+      display:flex;justify-content:space-between;align-items:end;margin:18px 0 10px;
+    }
+    .section-head h2{margin:0;font-size:20px;letter-spacing:-.4px}
+    .section-head span{font-size:12px;color:var(--red);font-weight:900}
+    .map-card{
+      position:relative;
+      height:210px;
+      background:#fff;
+      border:3px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:5px 5px 0 #15110f;
+    }
+    .map-bg{
+      position:absolute;inset:0;
+      background:
+        radial-gradient(circle at 35% 42%,#f7f1df 0 30%,transparent 31%),
+        radial-gradient(circle at 68% 58%,#f7f1df 0 24%,transparent 25%),
+        linear-gradient(#fffaf0,#fff4d4);
+    }
+    .pin{
+      position:absolute;
+      width:46px;height:46px;border-radius:50%;
+      background:var(--yellow);
+      border:3px solid var(--line);
+      display:grid;place-items:center;
+      font-size:22px;
+      cursor:pointer;
+      transition:.2s;
+    }
+    .pin:hover{transform:scale(1.12) rotate(-5deg)}
+    .pin.seoul{left:72px;top:64px}.pin.jeju{left:118px;top:132px}.pin.tokyo{right:88px;top:74px}.pin.ny{right:42px;bottom:42px}
+    .recipe-card{
+      margin-top:16px;
+      background:#fff;
+      border:2px solid #eadfc7;
+      border-radius:22px;
+      padding:14px;
+      display:flex;
+      gap:12px;
+      box-shadow:0 8px 18px rgba(0,0,0,.07);
+    }
+    .thumb{
+      min-width:70px;height:70px;border-radius:18px;
+      background:var(--red);
+      border:3px solid var(--line);
+      display:grid;place-items:center;
+      font-size:32px;
+    }
+    .recipe-card h3{margin:2px 0 4px;font-size:17px}
+    .recipe-card p{margin:0;color:#6f665e;font-size:12px;font-weight:700;line-height:1.45}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .chip{
+      font-size:11px;font-weight:900;padding:5px 8px;border-radius:999px;
+      background:#fff1b8;border:1.7px solid #111;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .mini{
+      min-height:112px;
+      border:2.5px solid var(--line);
+      border-radius:20px;
+      padding:12px;
+      background:#fff;
+    }
+    .mini.red{background:var(--red);color:#fff}.mini.yellow{background:var(--yellow)}.mini.dark{background:#1b1715;color:#fff}
+    .mini b{display:block;font-size:15px;margin:8px 0 4px}.mini small{font-weight:700;opacity:.78;line-height:1.4}
+    .feed{
+      display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;
+    }
+    .feed::-webkit-scrollbar{display:none}
+    .post{
+      min-width:150px;
+      background:#fff;
+      border:2px solid var(--line);
+      border-radius:20px;
+      padding:10px;
+    }
+    .photo{
+      height:92px;border-radius:15px;background:linear-gradient(135deg,#ffe676,#ff473f);display:grid;place-items:center;font-size:38px;border:2px solid #111;
+    }
+    .post b{display:block;margin-top:8px;font-size:13px}.post small{color:var(--gray);font-weight:800}
+    .write{
+      margin-top:18px;
+      border-radius:24px;
+      padding:16px;
+      background:#1b1715;
+      color:#fff;
+      border:3px solid #111;
+      position:relative;
+      overflow:hidden;
+    }
+    .write h2{margin:0 0 6px;font-size:22px}.write p{margin:0 0 12px;font-size:13px;color:#f5e7c8;font-weight:700}
+    .btn{
+      border:0;border-radius:999px;background:var(--red);color:#fff;font-weight:900;padding:12px 18px;font-size:14px;
+      box-shadow:0 4px 0 #7a0b19;cursor:pointer;
+    }
+    .bottom-nav{
+      height:76px;
+      background:#fffdf6;
+      border-top:3px solid #111;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+    }
+    .nav{
+      border:0;background:transparent;font-family:inherit;cursor:pointer;
+      text-align:center;font-size:10px;font-weight:900;color:#7d746d;
+    }
+    .nav.active{color:var(--red)}
+    .nav div{font-size:24px;margin-bottom:2px}
+  
+    .pin.food-pin{
+      width:52px;
+      height:52px;
+      padding:0;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:3px 3px 0 #15110f;
+    }
+    .pin.food-pin .ramen-art{
+      width:74px;
+      height:54px;
+      transform:translate(-11px,-1px);
+      display:block;
+    }
+    .thumb.food-thumb{
+      overflow:hidden;
+      padding:0;
+      background:#fff;
+      font-size:0;
+    }
+    .thumb.food-thumb .ramen-art{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+    }
+    .recipe-card.featured{
+      display:block;
+      padding:0;
+      overflow:hidden;
+      border:3px solid var(--line);
+      box-shadow:5px 5px 0 #15110f;
+    }
+    .recipe-visual{
+      position:relative;
+      height:190px;
+      overflow:hidden;
+      border-bottom:3px solid var(--line);
+      background:var(--yellow);
+    }
+    .recipe-visual .ramen-art{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .recipe-badge{
+      position:absolute;
+      left:12px;
+      top:12px;
+      z-index:2;
+      background:var(--red);
+      color:#fff;
+      border:2px solid var(--line);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:11px;
+      font-weight:900;
+    }
+    .recipe-body{
+      padding:14px;
+      background:#fff;
+    }
+    .recipe-body h3{
+      margin:0 0 5px;
+      font-size:19px;
+    }
+    .recipe-body p{
+      margin:0;
+      color:#6f665e;
+      font-size:12px;
+      font-weight:700;
+      line-height:1.45;
+    }
+    .photo{
+      overflow:hidden;
+      padding:0;
+      background:#fff;
+      font-size:0;
+    }
+    .photo .ramen-art{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .post:hover .photo .ramen-art{
+      transform:scale(1.06);
+      transition:.25s ease;
+    }
+    .ramen-slider{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding-bottom:8px;
+      scrollbar-width:none;
+    }
+    .ramen-slider::-webkit-scrollbar{display:none}
+    .ramen-card{
+      min-width:158px;
+      background:#fff;
+      border:2.5px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:4px 4px 0 #15110f;
+    }
+    .ramen-card-img{
+      height:108px;
+      overflow:hidden;
+      background:var(--yellow);
+    }
+    .ramen-card-img .ramen-art{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .ramen-card-body{
+      padding:10px;
+    }
+    .ramen-card-body b{
+      display:block;
+      font-size:13px;
+      margin-bottom:3px;
+    }
+    .ramen-card-body small{
+      color:var(--gray);
+      font-weight:800;
+    }
+
+  
+    .hero-cta{
+      margin-top:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff;
+      color:var(--red);
+      border:2px solid var(--line);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
+      font-weight:900;
+      box-shadow:3px 3px 0 #15110f;
+      cursor:pointer;
+      position:relative;
+      z-index:2;
+    }
+    .hero-cta:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #15110f}
+    .video-mark{
+      position:absolute;
+      right:8px;
+      bottom:8px;
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      background:var(--red);
+      color:#fff;
+      border:2px solid var(--line);
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      font-weight:900;
+    }
+    .ramen-card-img{position:relative}
+
+  
+    /* Mobile interaction upgrade */
+    button, .pin, .post, .ramen-card, .nav, .recipe-card, .hero-cta, .search, .mini {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .tap-feedback {
+      transform: scale(.96) !important;
+      transition: transform .14s ease;
+    }
+    .screen-view {
+      display: block;
+    }
+    .screen-view.is-hidden {
+      display: none;
+    }
+    .bottom-sheet {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 88px;
+      z-index: 60;
+      background: #fffdf6;
+      border: 3px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 7px 7px 0 #15110f, 0 18px 50px rgba(0,0,0,.24);
+      padding: 16px;
+      transform: translateY(120%);
+      opacity: 0;
+      pointer-events: none;
+      transition: .28s ease;
+    }
+    .bottom-sheet.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sheet-handle {
+      width: 46px;
+      height: 5px;
+      border-radius: 99px;
+      background: #d8cbb6;
+      margin: 0 auto 12px;
+    }
+    .sheet-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .sheet-top h3 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.4px;
+    }
+    .sheet-top p {
+      margin: 6px 0 0;
+      color: #6f665e;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+    .close-sheet {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      background: var(--yellow);
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .sheet-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .sheet-actions button {
+      flex: 1;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 11px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .sheet-actions .primary {
+      background: var(--red);
+      color: white;
+    }
+    .sheet-actions .secondary {
+      background: var(--yellow);
+      color: var(--black);
+    }
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 96px;
+      z-index: 80;
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      background: #1b1715;
+      color: #fff;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 900;
+      pointer-events: none;
+      transition: .25s ease;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 70;
+      background: rgba(0,0,0,.36);
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 116px;
+      z-index: 75;
+      background: #fffdf6;
+      border: 3px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 7px 7px 0 #15110f;
+      padding: 18px;
+      transform: scale(.92);
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s ease;
+    }
+    .modal.open {
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+    }
+    .modal label {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .modal input, .modal textarea, .modal select {
+      width: 100%;
+      margin-top: 6px;
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 11px;
+      font: inherit;
+      background: #fff;
+    }
+    .modal textarea {
+      height: 72px;
+      resize: none;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .modal-actions button {
+      flex: 1;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .modal-actions .submit {
+      background: var(--red);
+      color: #fff;
+    }
+    .tab-page {
+      animation: fadeSlide .24s ease both;
+    }
+    @keyframes fadeSlide {
+      from {opacity: 0; transform: translateY(8px)}
+      to {opacity: 1; transform: translateY(0)}
+    }
+    .map-full, .recipe-full, .community-full, .my-full {
+      background: #fff;
+      border: 3px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 5px 5px 0 #15110f;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .map-full h2, .recipe-full h2, .community-full h2, .my-full h2 {
+      margin: 0 0 8px;
+    }
+    .big-placeholder {
+      height: 260px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 30% 30%, #fff7de 0 18%, transparent 19%),
+        radial-gradient(circle at 70% 55%, #fff7de 0 24%, transparent 25%),
+        linear-gradient(#fff0bd, #fff7db);
+      border: 3px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .big-placeholder .pin {position:absolute}
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .mini-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 10px;
+      background: #fff8e7;
+      cursor: pointer;
+    }
+    .mini-row b {font-size: 14px}
+    .mini-row small {display:block;color:var(--gray);font-weight:800;margin-top:2px}
+    .mini-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 2px solid var(--line);
+      display: grid;
+      place-items: center;
+      background: var(--yellow);
+      font-size: 22px;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="iphone" aria-label="iPhone 13 app preview">
+    <section class="screen">
+      <div class="notch"></div>
+      <div class="status"><span>9:41</span><span>● ● ●</span></div>
+
+      <div class="content">
+        <div class="tab-page" data-page="home">
+        <section class="hero">
+          <span class="tag">🍜 JIN MAP</span>
+          <h1>찐(JIN)맛집</h1>
+          <p>너만의 진라면 레시피는 뭐야? 세계의 토핑과 장소를 탐험해봐!</p>
+          <button class="hero-cta" data-open-modal="recipe">+ 내 레시피 등록하기</button>
+          <div class="mascot">
+            <div class="egg"></div>
+            <div class="face"><div class="mouth"></div></div>
+          </div>
+        </section>
+
+        <div class="search">🔍 어디서 진라면을 먹어볼까?</div>
+
+        <div class="section-head">
+          <h2>오늘의 라면 지도</h2>
+          <span>전체보기</span>
+        </div>
+        <section class="map-card">
+          <div class="map-bg"></div>
+          <div class="pin food-pin seoul" data-recipe-key="seoul">
+    <svg class="ramen-art ramen-seoul" viewBox="0 0 260 190" role="img" aria-label="SEOUL">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <g>
+            <ellipse cx="96" cy="93" rx="25" ry="20" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="145" cy="117" rx="28" ry="21" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="178" cy="93" rx="22" ry="17" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <path d="M194 133c29-18 49 8 25 26" fill="none" stroke="#E5213D" stroke-width="12" stroke-linecap="round"/>
+            <path d="M84 132c28-17 47 7 25 24" fill="none" stroke="#E5213D" stroke-width="11" stroke-linecap="round"/>
+          </g>
+          <g fill="#35A85D">
+            <ellipse cx="126" cy="89" rx="12" ry="5" transform="rotate(-18 126 89)"/>
+            <ellipse cx="163" cy="143" rx="12" ry="5" transform="rotate(20 163 143)"/>
+            <ellipse cx="109" cy="151" rx="12" ry="5" transform="rotate(-8 109 151)"/>
+          </g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">GANGNEUNG</text>
+    </svg>
+    </div>
+          <div class="pin food-pin jeju" data-recipe-key="jeju">
+    <svg class="ramen-art ramen-jeju" viewBox="0 0 260 190" role="img" aria-label="JEJU">
+      <rect width="260" height="190" rx="28" fill="#FF6650"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="92" y="84" width="82" height="55" rx="20" fill="#753621" stroke="#181412" stroke-width="5"/>
+          <rect x="107" y="99" width="52" height="29" rx="15" fill="#E4845B"/>
+          <g fill="#35A85D"><ellipse cx="83" cy="134" rx="12" ry="5"/><ellipse cx="184" cy="110" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">JEJU</text>
+    </svg>
+    </div>
+          <div class="pin food-pin tokyo" data-recipe-key="tokyo">
+    <svg class="ramen-art ramen-tokyo" viewBox="0 0 260 190" role="img" aria-label="TOKYO">
+      <rect width="260" height="190" rx="28" fill="#FFF1D0"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <ellipse cx="145" cy="93" rx="38" ry="28" fill="#8A4931" stroke="#181412" stroke-width="5"/>
+          <ellipse cx="145" cy="93" rx="23" ry="16" fill="#DF936A"/>
+          <ellipse cx="94" cy="117" rx="25" ry="20" fill="#FFFDF0" stroke="#181412" stroke-width="5"/>
+          <circle cx="99" cy="117" r="9" fill="#FFC51E"/>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">TOKYO</text>
+    </svg>
+    </div>
+          <div class="pin food-pin ny" data-recipe-key="ny">
+    <svg class="ramen-art ramen-ny" viewBox="0 0 260 190" role="img" aria-label="NYC">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="88" y="84" width="97" height="59" rx="18" fill="#FFDD37" stroke="#181412" stroke-width="5"/>
+          <circle cx="117" cy="108" r="6" fill="#FFAD23"/>
+          <circle cx="154" cy="124" r="7" fill="#FFAD23"/>
+          <circle cx="162" cy="100" r="5" fill="#FFAD23"/>
+          <g fill="#35A85D"><ellipse cx="84" cy="145" rx="12" ry="5"/><ellipse cx="194" cy="115" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">NYC</text>
+    </svg>
+    </div>
+        </section>
+
+        <article class="recipe-card featured" id="selectedRecipe">
+          <div class="recipe-visual">
+            <span class="recipe-badge">GANGNEUNG PICK</span>
+            
+    <svg class="ramen-art ramen-seoul" viewBox="0 0 260 190" role="img" aria-label="SEOUL">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <g>
+            <ellipse cx="96" cy="93" rx="25" ry="20" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="145" cy="117" rx="28" ry="21" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="178" cy="93" rx="22" ry="17" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <path d="M194 133c29-18 49 8 25 26" fill="none" stroke="#E5213D" stroke-width="12" stroke-linecap="round"/>
+            <path d="M84 132c28-17 47 7 25 24" fill="none" stroke="#E5213D" stroke-width="11" stroke-linecap="round"/>
+          </g>
+          <g fill="#35A85D">
+            <ellipse cx="126" cy="89" rx="12" ry="5" transform="rotate(-18 126 89)"/>
+            <ellipse cx="163" cy="143" rx="12" ry="5" transform="rotate(20 163 143)"/>
+            <ellipse cx="109" cy="151" rx="12" ry="5" transform="rotate(-8 109 151)"/>
+          </g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">GANGNEUNG</text>
+    </svg>
+    
+          </div>
+          <div class="recipe-body">
+            <h3>강릉 매콤감자라면</h3>
+            <p>추천 레시피: 열라면 + 감자 + 청양고추<br>라면 먹기 좋은 장소: 강릉 안목해변</p>
+            <div class="chips"><span class="chip">#K푸드</span><span class="chip">#강릉라면</span><span class="chip">⭐ 4.9</span></div>
+          </div>
+        </article>
+
+        <div class="section-head">
+          <h2>오뚜기 추천</h2>
+          <span>오뚜기 추천</span>
+        </div>
+        <section class="grid">
+          <div class="mini"><span>📍</span><b>지역 카드</b><small>서울 · 부산 · 제주 · 도쿄 · 뉴욕</small></div>
+          <div class="mini red"><span>🍜</span><b>라면 추천</b><small>진라면 매운맛 / 순한맛 매칭</small></div>
+          <div class="mini yellow"><span>🥬</span><b>토핑 매칭</b><small>지역 특산물 기반 추천</small></div>
+          <div class="mini dark"><span>▶️</span><b>숏폼 레시피</b><small>60초 영상으로 따라하기</small></div>
+        </section>
+
+        <div class="section-head">
+          <h2>인기 레시피 피드</h2>
+          <span>더보기</span>
+        </div>
+        <section class="feed">
+          <div class="post"><div class="photo">
+    <svg class="ramen-art ramen-busan" viewBox="0 0 260 190" role="img" aria-label="BUSAN">
+      <rect width="260" height="190" rx="28" fill="#FFE35A"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <path d="M90 91c36-28 77 12 45 45" fill="none" stroke="#FF8A5B" stroke-width="16" stroke-linecap="round"/>
+          <circle cx="139" cy="104" r="4" fill="#181412"/>
+          <path d="M154 127c28-20 58 8 34 31" fill="none" stroke="#FF8A5B" stroke-width="14" stroke-linecap="round"/>
+          <g fill="#35A85D"><ellipse cx="90" cy="132" rx="12" ry="5"/><ellipse cx="174" cy="102" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">BUSAN</text>
+    </svg>
+    </div><b>부산 해산물 진라면</b><small>❤️ 12.4k</small></div>
+          <div class="post"><div class="photo">
+    <svg class="ramen-art ramen-jeju" viewBox="0 0 260 190" role="img" aria-label="JEJU">
+      <rect width="260" height="190" rx="28" fill="#FF6650"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="92" y="84" width="82" height="55" rx="20" fill="#753621" stroke="#181412" stroke-width="5"/>
+          <rect x="107" y="99" width="52" height="29" rx="15" fill="#E4845B"/>
+          <g fill="#35A85D"><ellipse cx="83" cy="134" rx="12" ry="5"/><ellipse cx="184" cy="110" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">JEJU</text>
+    </svg>
+    </div><b>제주 해변미역라면</b><small>❤️ 9.8k</small></div>
+          <div class="post"><div class="photo">
+    <svg class="ramen-art ramen-tokyo" viewBox="0 0 260 190" role="img" aria-label="TOKYO">
+      <rect width="260" height="190" rx="28" fill="#FFF1D0"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <ellipse cx="145" cy="93" rx="38" ry="28" fill="#8A4931" stroke="#181412" stroke-width="5"/>
+          <ellipse cx="145" cy="93" rx="23" ry="16" fill="#DF936A"/>
+          <ellipse cx="94" cy="117" rx="25" ry="20" fill="#FFFDF0" stroke="#181412" stroke-width="5"/>
+          <circle cx="99" cy="117" r="9" fill="#FFC51E"/>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">TOKYO</text>
+    </svg>
+    </div><b>도쿄 골목라면</b><small>❤️ 8.1k</small></div>
+        </section>
+
+        <div class="section-head">
+          <h2>추천 레시피 영상</h2>
+          <span>NEW</span>
+        </div>
+        <section class="ramen-slider">
+          <article class="ramen-card"><div class="ramen-card-img">
+    <svg class="ramen-art ramen-seoul" viewBox="0 0 260 190" role="img" aria-label="SEOUL">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <g>
+            <ellipse cx="96" cy="93" rx="25" ry="20" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="145" cy="117" rx="28" ry="21" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="178" cy="93" rx="22" ry="17" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <path d="M194 133c29-18 49 8 25 26" fill="none" stroke="#E5213D" stroke-width="12" stroke-linecap="round"/>
+            <path d="M84 132c28-17 47 7 25 24" fill="none" stroke="#E5213D" stroke-width="11" stroke-linecap="round"/>
+          </g>
+          <g fill="#35A85D">
+            <ellipse cx="126" cy="89" rx="12" ry="5" transform="rotate(-18 126 89)"/>
+            <ellipse cx="163" cy="143" rx="12" ry="5" transform="rotate(20 163 143)"/>
+            <ellipse cx="109" cy="151" rx="12" ry="5" transform="rotate(-8 109 151)"/>
+          </g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">GANGNEUNG</text>
+    </svg>
+    </div><div class="ramen-card-body"><b>강릉 매콤감자라면</b><small>강릉 · 안목해변</small></div></article>
+          <article class="ramen-card"><div class="ramen-card-img">
+    <svg class="ramen-art ramen-busan" viewBox="0 0 260 190" role="img" aria-label="BUSAN">
+      <rect width="260" height="190" rx="28" fill="#FFE35A"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <path d="M90 91c36-28 77 12 45 45" fill="none" stroke="#FF8A5B" stroke-width="16" stroke-linecap="round"/>
+          <circle cx="139" cy="104" r="4" fill="#181412"/>
+          <path d="M154 127c28-20 58 8 34 31" fill="none" stroke="#FF8A5B" stroke-width="14" stroke-linecap="round"/>
+          <g fill="#35A85D"><ellipse cx="90" cy="132" rx="12" ry="5"/><ellipse cx="174" cy="102" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">BUSAN</text>
+    </svg>
+    </div><div class="ramen-card-body"><b>해산물 진라면</b><small>부산 · 시장</small></div></article>
+          <article class="ramen-card"><div class="ramen-card-img">
+    <svg class="ramen-art ramen-ny" viewBox="0 0 260 190" role="img" aria-label="NYC">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="88" y="84" width="97" height="59" rx="18" fill="#FFDD37" stroke="#181412" stroke-width="5"/>
+          <circle cx="117" cy="108" r="6" fill="#FFAD23"/>
+          <circle cx="154" cy="124" r="7" fill="#FFAD23"/>
+          <circle cx="162" cy="100" r="5" fill="#FFAD23"/>
+          <g fill="#35A85D"><ellipse cx="84" cy="145" rx="12" ry="5"/><ellipse cx="194" cy="115" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">NYC</text>
+    </svg>
+    </div><div class="ramen-card-body"><b>루프탑치즈라면</b><small>뉴욕 · 루프탑</small></div></article>
+        </section>
+
+        <section class="write">
+          <h2>내 레시피 등록하기</h2>
+          <p>사진, 토핑, 장소를 올리고 전 세계 사람들과 공유해요.</p>
+          <button class="btn" data-open-modal="recipe">+ 레시피 만들기</button>
+        </section>
+        </div>
+
+        <div class="tab-page is-hidden" data-page="map">
+          <section class="map-full">
+            <h2>라면 로드맵</h2>
+            <p style="margin:0;color:var(--gray);font-size:13px;font-weight:700;">핀을 누르면 지역별 추천 레시피가 열려요.</p>
+            <div class="big-placeholder">
+              <div class="pin food-pin seoul" data-recipe-key="seoul" style="left:58px;top:72px;">🍜</div>
+              <div class="pin food-pin jeju" data-recipe-key="jeju" style="left:148px;top:160px;">🌊</div>
+              <div class="pin food-pin tokyo" data-recipe-key="tokyo" style="right:74px;top:88px;">🍥</div>
+              <div class="pin food-pin ny" data-recipe-key="ny" style="right:38px;bottom:48px;">🧀</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="tab-page is-hidden" data-page="recipe">
+          <section class="recipe-full">
+            <h2>추천 레시피</h2>
+            <p style="margin:0;color:var(--gray);font-size:13px;font-weight:700;">레시피를 누르면 상세 카드가 떠요.</p>
+            <div class="mini-list">
+              <div class="mini-row" data-recipe-key="seoul"><div class="mini-icon">🥔</div><div><b>강릉 매콤감자라면</b><small>열라면 + 감자 + 청양고추</small></div></div>
+              <div class="mini-row" data-recipe-key="tokyo"><div class="mini-icon">🍥</div><div><b>도쿄 골목라면</b><small>진라면 순한맛 + 차슈 + 반숙계란</small></div></div>
+              <div class="mini-row" data-recipe-key="jeju"><div class="mini-icon">🌿</div><div><b>제주 해변미역라면</b><small>진라면 매운맛 + 흑돼지 + 미역</small></div></div>
+              <div class="mini-row" data-recipe-key="ny"><div class="mini-icon">🧀</div><div><b>뉴욕 루프탑치즈라면</b><small>스낵면 + 치즈 + 베이컨</small></div></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="tab-page is-hidden" data-page="community">
+          <section class="community-full">
+            <h2>커뮤니티</h2>
+            <p style="margin:0;color:var(--gray);font-size:13px;font-weight:700;">좋아요와 저장 버튼이 바로 반응해요.</p>
+            <div class="mini-list">
+              <div class="mini-row" data-sheet-title="오늘의 인기 레시피" data-sheet-body="강릉 매콤감자라면이 오늘 1위예요. 감자 토핑과 청양고추 조합이 인기입니다."><div class="mini-icon">🔥</div><div><b>오늘의 인기 레시피</b><small>강릉 매콤감자라면</small></div></div>
+              <div class="mini-row" data-sheet-title="댓글 알림" data-sheet-body="내 레시피에 새로운 댓글이 달렸어요. ‘감자 넣으니까 국물이 더 진해요!’"><div class="mini-icon">💬</div><div><b>댓글 알림</b><small>새 댓글 3개</small></div></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="tab-page is-hidden" data-page="my">
+          <section class="my-full">
+            <h2>마이페이지</h2>
+            <p style="margin:0;color:var(--gray);font-size:13px;font-weight:700;">내가 저장한 레시피와 배지를 확인해요.</p>
+            <div class="mini-list">
+              <div class="mini-row" data-open-modal="recipe"><div class="mini-icon">✍️</div><div><b>내 레시피 등록하기</b><small>사진, 토핑, 장소 추가</small></div></div>
+              <div class="mini-row" data-sheet-title="획득 배지" data-sheet-body="강릉 탐험가, 매운맛 챌린저, 토핑 장인 배지를 획득했어요."><div class="mini-icon">🏅</div><div><b>획득 배지</b><small>3개 보유</small></div></div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="modal" id="recipeModal" aria-hidden="true">
+        <h3>내 레시피 등록하기</h3>
+        <label>레시피 이름
+          <input id="recipeNameInput" value="나만의 진라면 레시피" />
+        </label>
+        <label>토핑 선택
+          <select id="toppingInput">
+            <option>감자 + 청양고추</option>
+            <option>차슈 + 반숙계란</option>
+            <option>흑돼지 + 미역</option>
+            <option>치즈 + 베이컨</option>
+          </select>
+        </label>
+        <label>한 줄 소개
+          <textarea id="recipeMemoInput">내가 먹어본 최고의 라면 조합!</textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" data-close-modal>닫기</button>
+          <button type="button" class="submit" id="submitRecipe">등록하기</button>
+        </div>
+      </section>
+
+      <section class="bottom-sheet" id="bottomSheet" aria-live="polite">
+        <div class="sheet-handle"></div>
+        <div class="sheet-top">
+          <div>
+            <h3 id="sheetTitle">레시피 상세</h3>
+            <p id="sheetBody">추천 레시피 정보가 여기에 표시됩니다.</p>
+          </div>
+          <button type="button" class="close-sheet" id="closeSheet">×</button>
+        </div>
+        <div class="sheet-actions">
+          <button type="button" class="secondary" id="saveRecipe">저장</button>
+          <button type="button" class="primary" id="shareRecipe">따라하기</button>
+        </div>
+      </section>
+      <div class="toast" id="toast">저장했어요!</div>
+
+      <nav class="bottom-nav">
+        <button type="button" class="nav active" data-tab="home"><div>🏠</div>Home</button>
+        <button type="button" class="nav" data-tab="map"><div>🗺️</div>Map</button>
+        <button type="button" class="nav" data-tab="recipe"><div>🍜</div>Recipe</button>
+        <button type="button" class="nav" data-tab="community"><div>💬</div>Community</button>
+        <button type="button" class="nav" data-tab="my"><div>👤</div>My</button>
+      </nav>
+    </section>
+  </main>
+
+  <template id="ramen-seoul">
+    <svg class="ramen-art ramen-seoul" viewBox="0 0 260 190" role="img" aria-label="SEOUL">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <g>
+            <ellipse cx="96" cy="93" rx="25" ry="20" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="145" cy="117" rx="28" ry="21" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <ellipse cx="178" cy="93" rx="22" ry="17" fill="#F2C66D" stroke="#181412" stroke-width="5"/>
+            <path d="M194 133c29-18 49 8 25 26" fill="none" stroke="#E5213D" stroke-width="12" stroke-linecap="round"/>
+            <path d="M84 132c28-17 47 7 25 24" fill="none" stroke="#E5213D" stroke-width="11" stroke-linecap="round"/>
+          </g>
+          <g fill="#35A85D">
+            <ellipse cx="126" cy="89" rx="12" ry="5" transform="rotate(-18 126 89)"/>
+            <ellipse cx="163" cy="143" rx="12" ry="5" transform="rotate(20 163 143)"/>
+            <ellipse cx="109" cy="151" rx="12" ry="5" transform="rotate(-8 109 151)"/>
+          </g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">GANGNEUNG</text>
+    </svg>
+    </template>
+<template id="ramen-busan">
+    <svg class="ramen-art ramen-busan" viewBox="0 0 260 190" role="img" aria-label="BUSAN">
+      <rect width="260" height="190" rx="28" fill="#FFE35A"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <path d="M90 91c36-28 77 12 45 45" fill="none" stroke="#FF8A5B" stroke-width="16" stroke-linecap="round"/>
+          <circle cx="139" cy="104" r="4" fill="#181412"/>
+          <path d="M154 127c28-20 58 8 34 31" fill="none" stroke="#FF8A5B" stroke-width="14" stroke-linecap="round"/>
+          <g fill="#35A85D"><ellipse cx="90" cy="132" rx="12" ry="5"/><ellipse cx="174" cy="102" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">BUSAN</text>
+    </svg>
+    </template>
+<template id="ramen-jeju">
+    <svg class="ramen-art ramen-jeju" viewBox="0 0 260 190" role="img" aria-label="JEJU">
+      <rect width="260" height="190" rx="28" fill="#FF6650"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="92" y="84" width="82" height="55" rx="20" fill="#753621" stroke="#181412" stroke-width="5"/>
+          <rect x="107" y="99" width="52" height="29" rx="15" fill="#E4845B"/>
+          <g fill="#35A85D"><ellipse cx="83" cy="134" rx="12" ry="5"/><ellipse cx="184" cy="110" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">JEJU</text>
+    </svg>
+    </template>
+<template id="ramen-tokyo">
+    <svg class="ramen-art ramen-tokyo" viewBox="0 0 260 190" role="img" aria-label="TOKYO">
+      <rect width="260" height="190" rx="28" fill="#FFF1D0"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <ellipse cx="145" cy="93" rx="38" ry="28" fill="#8A4931" stroke="#181412" stroke-width="5"/>
+          <ellipse cx="145" cy="93" rx="23" ry="16" fill="#DF936A"/>
+          <ellipse cx="94" cy="117" rx="25" ry="20" fill="#FFFDF0" stroke="#181412" stroke-width="5"/>
+          <circle cx="99" cy="117" r="9" fill="#FFC51E"/>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">TOKYO</text>
+    </svg>
+    </template>
+<template id="ramen-ny">
+    <svg class="ramen-art ramen-ny" viewBox="0 0 260 190" role="img" aria-label="NYC">
+      <rect width="260" height="190" rx="28" fill="#FFD400"/>
+      <circle cx="38" cy="34" r="13" fill="#fff" opacity=".45"/>
+      <circle cx="222" cy="45" r="18" fill="#fff" opacity=".35"/>
+      <path d="M84 48c-16-27 23-28 7-54M130 44c-18-31 24-32 8-58M176 48c-16-27 23-28 7-54" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+      <ellipse cx="130" cy="149" rx="88" ry="24" fill="#000" opacity=".16"/>
+      <ellipse cx="130" cy="109" rx="102" ry="62" fill="#FFF8E7" stroke="#181412" stroke-width="8"/>
+      <ellipse cx="130" cy="113" rx="78" ry="41" fill="#D94D1F" stroke="#FFB840" stroke-width="5"/>
+      
+      <g fill="none" stroke="#FFD85A" stroke-width="7" stroke-linecap="round">
+        <path d="M62 108c22-14 41 13 63-1s43 13 67-1"/>
+        <path d="M66 126c22-14 42 13 64-1s43 14 68-2"/>
+        <path d="M76 92c18-11 36 10 55-1s36 10 55-1"/>
+      </g>
+    
+      
+          <rect x="88" y="84" width="97" height="59" rx="18" fill="#FFDD37" stroke="#181412" stroke-width="5"/>
+          <circle cx="117" cy="108" r="6" fill="#FFAD23"/>
+          <circle cx="154" cy="124" r="7" fill="#FFAD23"/>
+          <circle cx="162" cy="100" r="5" fill="#FFAD23"/>
+          <g fill="#35A85D"><ellipse cx="84" cy="145" rx="12" ry="5"/><ellipse cx="194" cy="115" rx="12" ry="5"/></g>
+        
+      <rect x="18" y="16" width="70" height="27" rx="14" fill="#E5213D" stroke="#181412" stroke-width="4"/>
+      <text x="53" y="35" font-size="14" font-family="Arial,sans-serif" font-weight="900" text-anchor="middle" fill="#fff">NYC</text>
+    </svg>
+    </template>
+
+  <script>
+    const recipes = {
+      seoul: {
+        title: "강릉 매콤감자라면",
+        recipe: "추천 레시피: 열라면 + 감자 + 청양고추",
+        place: "라면 먹기 좋은 장소: 강릉 안목해변",
+        badge: "GANGNEUNG PICK",
+        tags: ["#강릉라면", "#감자토핑", "⭐ 4.9"]
+      },
+      tokyo: {
+        title: "도쿄 골목라면",
+        recipe: "추천 레시피: 진라면 순한맛 + 차슈 + 반숙계란",
+        place: "라면 먹기 좋은 장소: 도쿄 골목 맛집거리",
+        badge: "TOKYO PICK",
+        tags: ["#도쿄라면", "#차슈", "⭐ 4.8"]
+      },
+      jeju: {
+        title: "제주 해변미역라면",
+        recipe: "추천 레시피: 진라면 매운맛 + 흑돼지 + 미역",
+        place: "라면 먹기 좋은 장소: 제주 해변",
+        badge: "JEJU SEA PICK",
+        tags: ["#제주라면", "#미역토핑", "⭐ 4.9"]
+      },
+      ny: {
+        title: "뉴욕 루프탑치즈라면",
+        recipe: "추천 레시피: 스낵면 + 치즈 + 베이컨",
+        place: "라면 먹기 좋은 장소: 뉴욕 루프탑",
+        badge: "NYC PICK",
+        tags: ["#루프탑라면", "#치즈", "⭐ 4.7"]
+      }
+    };
+
+    function getRamenArt(key){
+      const template = document.getElementById('ramen-' + key) || document.getElementById('ramen-seoul');
+      return template ? template.innerHTML : "🍜";
+    }
+
+    function showToast(message){
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    function openSheet(title, body){
+      document.getElementById("sheetTitle").textContent = title;
+      document.getElementById("sheetBody").textContent = body;
+      document.getElementById("bottomSheet").classList.add("open");
+    }
+
+    function closeSheet(){
+      document.getElementById("bottomSheet").classList.remove("open");
+    }
+
+    function selectRecipe(key){
+      const data = recipes[key] || recipes.seoul;
+      const card = document.getElementById('selectedRecipe');
+      card.innerHTML = `
+        <div class="recipe-visual">
+          <span class="recipe-badge">${data.badge}</span>
+          ${getRamenArt(key)}
+        </div>
+        <div class="recipe-body">
+          <h3>${data.title}</h3>
+          <p>${data.recipe}<br>${data.place}</p>
+          <div class="chips">${data.tags.map(tag => `<span class="chip">${tag}</span>`).join("")}</div>
+        </div>`;
+      card.animate([{transform:'scale(.98)'},{transform:'scale(1)'}],{duration:220});
+      openSheet(data.title, `${data.recipe} · ${data.place}`);
+    }
+
+    function openModal(){
+      document.querySelector(".modal-backdrop").classList.add("open");
+      const modal = document.getElementById("recipeModal");
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      document.querySelector(".modal-backdrop").classList.remove("open");
+      const modal = document.getElementById("recipeModal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function switchTab(tab){
+      document.querySelectorAll("[data-page]").forEach(page => {
+        page.classList.toggle("is-hidden", page.dataset.page !== tab);
+      });
+      document.querySelectorAll("[data-tab]").forEach(nav => {
+        nav.classList.toggle("active", nav.dataset.tab === tab);
+      });
+      closeSheet();
+      document.querySelector(".content").scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    document.addEventListener("click", event => {
+      const target = event.target.closest("[data-recipe-key], [data-tab], [data-open-modal], [data-close-modal], [data-sheet-title], .ramen-card, .post, .mini");
+      if (!target) return;
+
+      target.classList.add("tap-feedback");
+      window.setTimeout(() => target.classList.remove("tap-feedback"), 140);
+
+      if (target.dataset.recipeKey) {
+        selectRecipe(target.dataset.recipeKey);
+        return;
+      }
+
+      if (target.dataset.tab) {
+        switchTab(target.dataset.tab);
+        return;
+      }
+
+      if (target.dataset.openModal) {
+        openModal();
+        return;
+      }
+
+      if (target.dataset.closeModal !== undefined) {
+        closeModal();
+        return;
+      }
+
+      if (target.dataset.sheetTitle) {
+        openSheet(target.dataset.sheetTitle, target.dataset.sheetBody || "상세 내용을 확인해보세요.");
+        return;
+      }
+
+      if (target.classList.contains("ramen-card")) {
+        openSheet("추천 레시피 영상", "60초 숏폼 레시피가 재생되는 화면입니다. 실제 앱에서는 영상 플레이어로 연결됩니다.");
+        return;
+      }
+
+      if (target.classList.contains("post")) {
+        openSheet("인기 레시피 피드", "좋아요, 댓글, 저장이 가능한 커뮤니티 상세 화면입니다.");
+        return;
+      }
+
+      if (target.classList.contains("mini")) {
+        openSheet("오뚜기 추천", "선택한 콘텐츠 모듈의 상세 화면으로 이동합니다.");
+      }
+    });
+
+    document.getElementById("closeSheet").addEventListener("click", closeSheet);
+    document.getElementById("saveRecipe").addEventListener("click", () => showToast("레시피를 저장했어요!"));
+    document.getElementById("shareRecipe").addEventListener("click", () => showToast("따라하기 목록에 추가했어요!"));
+    document.getElementById("submitRecipe").addEventListener("click", () => {
+      closeModal();
+      showToast("내 레시피가 등록됐어요!");
+      switchTab("my");
+    });
+
+    document.querySelector(".search").addEventListener("click", () => {
+      openSheet("검색", "강릉, 도쿄, 제주, 뉴욕 또는 감자, 차슈, 미역, 치즈 같은 토핑을 검색할 수 있어요.");
+    });
+  </script>
+</body>
+</html>
